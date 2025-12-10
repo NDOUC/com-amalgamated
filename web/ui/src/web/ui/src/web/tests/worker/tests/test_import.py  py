@@ -1,0 +1,4 @@
+def test_import_worker_tasks():
+    import importlib
+    mod = importlib.import_module("worker.tasks")
+    assert hasattr(mod, "celery_app")
