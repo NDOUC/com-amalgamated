@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Invoice {{ metadata.invoice_number or uuid }}</title>
+    <style>
+      @font-face {
+        font-family: 'InterLocal';
+        src: local('Arial'), local('Helvetica'), local('sans-serif');
+      }
+      body { font-family: 'InterLocal', Arial, sans-serif; margin: 24px; color: #222; }
+      header { border-bottom: 1px solid #ddd; margin-bottom: 20px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      .right { text-align: right; }
+      .page-break { page-break-after: always; }
+      .avoid-break { page-break-inside: avoid; -webkit-page-break-inside: avoid; }
+      tr { page-break-inside: avoid; }
+      .invoice-table thead th { background: #f7f7f7; }
+      @page { size: A4; margin: 20mm; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>Invoice</h2>
+      <div>Invoice #: {{ metadata.invoice_number or uuid }}</div>
+      <div>Date: {{ created_at }}</div>
+    </header>
+
+    <section>
+      <strong>To:</strong>
+      <div>{{ customer.name }}</div>
+      <div>{{ customer.address }}</div>
+    </section>
+
+    <section class="avoid-break">
+      <h3>Items</h3>
+      <table class="invoice-table">
+        <thead>
+          <tr><th>Description</th><th>Qty</th><th>Unit</th><th class="right">Total</th></tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+          <tr>
+            <td>{{ it.description }}</td>
+            <td>{{ it.qty }}</td>
+            <td>{{ "%.2f"|format(it.unit_price) }}</td>
+            <td class="right">{{ "%.2f"|format(it.qty * it.unit_price) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div style="text-align:right;margin-top:10px">
+        <strong>Total: {{ "%.2f"|format(items | sum(attribute='qty') ) }}</strong>
+      </div>
+    </section>
+  </body>
+  </html>
+  
