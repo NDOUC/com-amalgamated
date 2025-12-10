@@ -1,0 +1,24 @@
+# Invoice PDF Generator (FastAPI + Celery + Headless Chrome)
+
+Overview
+- FastAPI backend exposes endpoints to create invoices and to download generated PDFs.
+- Celery worker renders HTML (Jinja2) to PDF via a separate headless Chrome container.
+- Redis is used as the Celery broker and for short-lived signed download tokens.
+- Postgres (docker-compose) is used for storage (SQLModel).
+- Local development uses docker-compose; generated PDFs are stored in a shared volume.
+
+Quick start (local)
+1. Copy `.env.sample` to `.env` and adjust values (JWT_SECRET, STRIPE keys if using Stripe).
+2. Build and start:
+   docker-compose up --build
+
+3. Sign up, create templates, create invoices, and download PDFs using the API (see endpoints in README and code).
+
+Structure
+- web/: FastAPI app and web Dockerfile
+- worker/: Celery worker and worker Dockerfile + templates
+- web/ui/: Minimal React UI scaffold for template management
+- .github/workflows/ci.yml: GitHub Actions workflow to build images and run tests
+
+Security note
+- This scaffold includes `.env.sample` only. Do not commit secrets. Replace JWT_SECRET and Stripe keys before production.
